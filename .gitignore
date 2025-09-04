@@ -1,3 +1,5 @@
 .direnv/
 .venv/
 scratchpad.md
+__pycache__/
+*.pyc
