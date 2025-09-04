@@ -1,7 +1,20 @@
 [project]
 name = "public-explanation"
 version = "0.1.0"
-description = "Add your description here"
+description = "AI-powered GitHub repository explanation tool using gitingest, mods, and glow"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "gitingest>=0.1.0",
+    "click>=8.0.0",
+    "requests>=2.31.0", 
+    "python-dotenv>=1.0.0",
+    "rich>=13.0.0"
+]
+
+[project.scripts]
+public-explanation = "public_explanation.main:cli"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
