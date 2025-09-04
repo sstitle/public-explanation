@@ -2,13 +2,16 @@
 
 AI-powered GitHub repository explanation tool that combines gitingest, mods, and glow to provide intelligent explanations of any public GitHub repository using natural language questions.
 
+Example on `octocat/Hello-World`
+![Example on octocat/Hello-World](example.png)
+
+
 ## Features
 
 - 🔍 **Smart Repository Discovery**: Find repos by name, URL, or fuzzy search
 - 🧠 **AI-Powered Analysis**: Uses OpenAI GPT-4o for intelligent code explanation
 - 📝 **Beautiful Output**: Rendered markdown explanations via glow
 - 💰 **Token Efficient**: Smart content filtering and caching to minimize API costs
-- 🚀 **Fast & Interactive**: Progressive loading with conversation support
 
 ## Quick Start
 
