@@ -14,58 +14,90 @@ AI-powered GitHub repository explanation tool that combines gitingest, mods, and
 
 ### Prerequisites
 
-- Python 3.13+
+- [Nix](https://nixos.org/download.html) with flakes enabled
 - OpenAI API key
-- `mods` and `glow` CLI tools installed
 
 ### Installation
 
-1. Clone and set up the project:
 ```bash
 git clone <your-repo-url>
 cd public-explanation
+
+# Enter development shell with all dependencies
+nix develop
+
+# Install Python dependencies
 uv sync
+
+# Run the tool
+uv run python -m public_explanation "octocat/Hello-World" "what does this repository do?"
 ```
 
-2. **TODO: Create your .env file with your OpenAI API key:**
+The Nix flake automatically provides:
+- Python 3.13+ with uv package manager
+- `mods` CLI tool for AI integration
+- `glow` CLI tool for markdown rendering
+- `mask` for task automation
+- All required system dependencies
+
+### Configuration
+
+Create a `.env` file with your OpenAI API key:
 ```bash
-cp .env.example .env
-# Edit .env and add your OPENAI_API_KEY
+OPENAI_API_KEY=your_api_key_here
 ```
 
-3. Install external CLI tools:
+#### Cost Management
+
+The tool includes built-in cost safety features:
+- Estimates token costs before making AI calls
+- Requires confirmation for requests over 5¢
+- Shows repository size and processing details
+- Use `--dry-run` to preview without API calls
+- Use `--force` to bypass confirmations
+
+#### Repository Discovery
+
+The tool intelligently handles various input formats:
+- **Direct URLs**: `https://github.com/owner/repo`
+- **Owner/Repo**: `facebook/react`
+- **Search Terms**: `"react router"` (shows interactive selection)
+- **Fuzzy Matching**: Finds repositories even with partial names
+
+#### Advanced Options
+
 ```bash
-# Install mods (AI CLI tool)
-# See: https://github.com/charmbracelet/mods
+# Customize AI model
+python -m public_explanation "repo" "question" --model gpt-4o-mini
 
-# Install glow (markdown renderer)  
-# See: https://github.com/charmbracelet/glow
+# Adjust content processing limits
+python -m public_explanation "repo" "question" --max-file-size 2 --max-total-size 100
+
+# Development mode without GitHub API
+python -m public_explanation "repo" "question" --no-api
+
+# Verbose output for debugging
+python -m public_explanation "repo" "question" --verbose
 ```
 
-### Usage
+## Development
+
+### Nix Development Environment
+
+The project uses Nix flakes for reproducible development environments:
 
 ```bash
-# Ask about a specific repository
-python -m public_explanation "facebook/react" "how does the virtual DOM work?"
+# Enter the development shell (includes all dependencies)
+nix develop
 
-# Search for a repository and ask a question
-python -m public_explanation "react router" "how do I set up nested routes?"
-
-# Use full GitHub URLs
-python -m public_explanation "https://github.com/microsoft/vscode" "how does the extension system work?"
-
-# Dry run to see what would be processed
-python -m public_explanation "small-repo" "test question" --dry-run --verbose
+direnv allow
 ```
 
-## Development Status
-
-🚧 **Currently in Phase 1**: Foundation & Basic CLI
-- ✅ Project setup and dependencies
-- 🔄 Repository discovery implementation
-- ⏳ Content processing integration
-
-See `scratchpad.md` for detailed development plan and progress.
+The development shell provides:
+- Python 3.13+ with uv package manager
+- All required CLI tools (`mods`, `glow`, `mask`)
+- Consistent development environment across systems
+- Isolated dependencies without system pollution
 
 ## Architecture
 
