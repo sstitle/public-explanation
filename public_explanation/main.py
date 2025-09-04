@@ -15,6 +15,7 @@ from rich.prompt import Confirm
 
 from .repository import RepositoryDiscovery
 from .content_processor import ContentProcessor
+from .ai_processor import AIProcessor
 
 # Load environment variables from .env file
 load_dotenv()
@@ -79,6 +80,8 @@ def cli(repository, question, model, max_file_size, max_total_size, verbose, dry
         max_total_size_mb=max_total_size,
         verbose=verbose
     )
+    # Don't check dependencies in dry-run mode for development testing
+    ai_processor = AIProcessor(model=model, verbose=verbose, check_deps=not dry_run)
     
     try:
         # Sanitize inputs
@@ -193,11 +196,35 @@ def cli(repository, question, model, max_file_size, max_total_size, verbose, dry
             elif estimated_cost <= cost_threshold:
                 console.print("[green]✅ Cost is reasonable - ready to proceed![/green]")
             
+            # Process with AI and render result
+            success = ai_processor.process_repository_question(
+                repo_info, clean_question, content_result, dry_run=dry_run
+            )
+            
+            if success:
+                console.print(Panel(
+                    f"[green]🎉 Successfully generated explanation![/green]\n"
+                    f"Repository: {repo_info.full_name}\n"
+                    f"Cost: ${estimated_cost:.4f}",
+                    title="Task Complete",
+                    border_style="green"
+                ))
+            else:
+                console.print("[red]❌ Failed to generate explanation[/red]")
+                sys.exit(1)
+        
+        elif dry_run:
+            # Show complete dry-run pipeline
             console.print(Panel(
-                f"[yellow]Ready for AI processing in Phase 3![/yellow]\n"
-                f"Next: Integrate with mods for AI-powered explanations",
-                title="Phase 2 Complete",
-                border_style="green"
+                "[blue]✅ Complete pipeline test successful![/blue]\n\n"
+                "Would execute:\n"
+                "1. ✅ Repository discovery\n"
+                "2. ✅ Content extraction with gitingest\n" 
+                "3. ✅ Token cost estimation\n"
+                "4. ✅ AI processing with mods\n"
+                "5. ✅ Beautiful rendering with glow",
+                title="Dry Run Complete",
+                border_style="blue"
             ))
         
         if dry_run:

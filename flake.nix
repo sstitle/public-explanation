@@ -29,6 +29,8 @@
           packages = [
             pkgs.uv
             pkgs.mask
+            pkgs.glow
+            pkgs.mods
           ];
         };
       };
